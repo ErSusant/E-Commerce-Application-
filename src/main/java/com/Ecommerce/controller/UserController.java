@@ -3,9 +3,12 @@ package com.Ecommerce.controller;
 import com.Ecommerce.dto.UserDto;
 import com.Ecommerce.repository.UserRepository;
 import com.Ecommerce.service.UserServiceIMPL;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +23,10 @@ public class UserController {
         this.userRepository = userRepository;
     }
     @PostMapping("/addUser")
-    public ResponseEntity<?>addUser(@RequestBody UserDto dto){
+    public ResponseEntity<?>addUser(@Valid @RequestBody UserDto dto, BindingResult result){
+        if(result.hasErrors()){
+            return new ResponseEntity<>(result.getFieldError().getDefaultMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         if(userRepository.existsByEmail(dto.getEmail())){
             return new ResponseEntity<>("Exists Email",HttpStatus.BAD_REQUEST);
         }

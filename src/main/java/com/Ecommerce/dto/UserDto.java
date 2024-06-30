@@ -2,18 +2,24 @@ package com.Ecommerce.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 public class UserDto {
     private Long id;
-
+@NotEmpty
+@Size(min=2,message = "Should be 2 character")
     private String name;
-
+@NotEmpty
+@Email
     private String email;
-
+@NotEmpty
     private String username;
+@NotEmpty
 @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
+@NotEmpty
     private String role;
 
     public String getRole() {
