@@ -2,7 +2,10 @@ package com.Ecommerce.service;
 
 import com.Ecommerce.dto.UserDto;
 import com.Ecommerce.entity.User;
+import com.Ecommerce.exception.ResourceNotFound;
+import com.Ecommerce.payload.LoginDto;
 import com.Ecommerce.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +14,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceIMPL implements UserService{
+private JWTService jwtService;
+
     private UserRepository userRepository;
 
-    public UserServiceIMPL(UserRepository userRepository) {
+    public UserServiceIMPL(JWTService jwtService, UserRepository userRepository) {
+        this.jwtService = jwtService;
         this.userRepository = userRepository;
     }
 
@@ -42,6 +48,18 @@ public class UserServiceIMPL implements UserService{
         User save = userRepository.save(user);
         UserDto userDto = entityDto(save);
         return userDto;
+    }
+    @Override
+    public String verifyLogin(LoginDto loginDto) {
+        Optional<User> byUsername = userRepository.findByUsername(loginDto.getUsername());
+        if (byUsername.isPresent()) {
+            User user = byUsername.get();
+            if (BCrypt.checkpw(loginDto.getPassword(), user.getPassword())) {
+                String token = jwtService.generateToken(loginDto);
+                return token;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.Ecommerce.controller;
 
 import com.Ecommerce.dto.UserDto;
+import com.Ecommerce.payload.JWTTokenDto;
+import com.Ecommerce.payload.LoginDto;
 import com.Ecommerce.repository.UserRepository;
 import com.Ecommerce.service.UserServiceIMPL;
 import jakarta.validation.Valid;
@@ -36,6 +38,19 @@ public class UserController {
         dto.setPassword(BCrypt.hashpw(dto.getPassword(),BCrypt.gensalt(10)));
         UserDto userDto = userServiceIMPL.addUser(dto);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+    }
+    @PostMapping("/login")
+    public ResponseEntity<?>verifyLogin(@RequestBody LoginDto loginDto){
+        String token = userServiceIMPL.verifyLogin(loginDto);
+        if(token!=null){
+            JWTTokenDto jwtTokenDto=new JWTTokenDto();
+            jwtTokenDto.setType("JWT Token");
+            jwtTokenDto.setToken(token);
+            return new ResponseEntity<>(jwtTokenDto,HttpStatus.OK);
+        }
+         else{
+            return new ResponseEntity<>("Invalid Username/Password",HttpStatus.OK);
+        }
     }
     @DeleteMapping
     public ResponseEntity<String>deleteUser(@RequestParam long userId){
