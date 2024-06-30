@@ -5,6 +5,10 @@ import com.Ecommerce.entity.User;
 import com.Ecommerce.exception.ResourceNotFound;
 import com.Ecommerce.payload.LoginDto;
 import com.Ecommerce.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -80,15 +84,24 @@ private JWTService jwtService;
             User save = userRepository.save(user);
             UserDto userDto = entityDto(save);
             return userDto;
-
         }
-        return null;
+        else{
+            throw new ResourceNotFound("UserId Not Found: "+userId);
+        }
     }
 
     @Override
-    public List<UserDto> getAllUser() {
-        List<User> all = userRepository.findAll();
-        List<UserDto> collect = all.stream().map(a -> entityDto(a)).collect(Collectors.toList());
+    public List<UserDto> getAllUser(int pageSize,int pageNo,String sortBy,String sortDir) {
+        Pageable pageable=null;
+         if(sortDir.equalsIgnoreCase("asc")){
+               pageable = PageRequest.of(pageSize, pageNo, Sort.by(sortBy).ascending());
+         }
+        if(sortDir.equalsIgnoreCase("desc")){
+            pageable = PageRequest.of(pageSize, pageNo, Sort.by(sortBy).descending());
+        }
+        Page<User> page = userRepository.findAll(pageable);
+        List<User> content = page.getContent();
+        List<UserDto> collect = content.stream().map(c -> entityDto(c)).collect(Collectors.toList());
         return collect;
     }
 
@@ -100,6 +113,8 @@ private JWTService jwtService;
             UserDto userDto = entityDto(user);
             return userDto;
         }
-        return null;
+        else{
+            throw new ResourceNotFound("UserId Not Found: "+userId);
+        }
     }
 }

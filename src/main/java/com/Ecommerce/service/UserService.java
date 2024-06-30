@@ -10,6 +10,6 @@ public interface UserService {
     public String verifyLogin(LoginDto loginDto);
     public void deleteUser(long userId);
     public UserDto updateUser(long userId,UserDto dto);
-    public List<UserDto> getAllUser();
+    public List<UserDto> getAllUser(int pageSize,int pageNo,String sortBy,String sortDir);
     public UserDto getById(long userId);
 }
