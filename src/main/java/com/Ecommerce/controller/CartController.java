@@ -30,13 +30,13 @@ public class CartController {
         return new ResponseEntity<>("Record Deleted",HttpStatus.OK);
     }
 
-    @PutMapping("/updateCart/{cartId}")
-    public ResponseEntity<CartDto>updateCart(
-     @AuthenticationPrincipal User user,@PathVariable long cartId,
-     @RequestBody CartDto dto){
-        CartDto cartDto = cartServiceIMPL.updateCart(user, cartId, dto);
-        return new ResponseEntity<>(cartDto,HttpStatus.OK);
-    }
+//    @PutMapping("/updateCart/{cartId}")
+//    public ResponseEntity<CartDto>updateCart(
+//     @AuthenticationPrincipal User user,@PathVariable long cartId,
+//     @RequestBody CartDto dto){
+//        CartDto cartDto = cartServiceIMPL.updateCart(user, cartId, dto);
+//        return new ResponseEntity<>(cartDto,HttpStatus.OK);
+//    }
     @GetMapping("/getAllCarts")
     public ResponseEntity<List<CartDto>>getAllUserCart(@AuthenticationPrincipal User user){
         List<CartDto> allCart = cartServiceIMPL.getAllCart(user);
